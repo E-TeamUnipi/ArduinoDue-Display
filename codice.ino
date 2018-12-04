@@ -144,7 +144,8 @@ void loop()
     byte cDataLen;
 
     char str[20];
-    
+    memset(str, 0, 20);
+
     if(canRx(0, &lMsgID, &bExtendedFormat, &cRxData[0], &cDataLen) != CAN_ERROR)
     {
       /* DEBUG
@@ -162,14 +163,12 @@ void loop()
 
         case 0x604:    // gear, byte 7-8
         {
-          memset(str, 0, 20);
           tft.textColor(RA8875_BLUE, RA8875_BLACK);
-          int weel_speed = big_to_little(cRxData[2], cRxData[3]);
+          int wheel_spin = big_to_little(cRxData[2], cRxData[3]);
 
-          sprintf(str, "%d", weel_speed);
+          sprintf(str, "%-6d", wheel_spin);
           tft.textSetCursor(SPEED_X,SPEED_Y + 50);
           tft.textWrite(str);
-          memset(str, 0, 20);
 
           tft.textColor(RA8875_YELLOW, RA8875_BLACK);
 
@@ -185,9 +184,8 @@ void loop()
         }
         case 0x60A:    // water temperature ect1, byte 5-6
         {
-          memset(str, 0, 20);
           float ect1 = big_to_little(cRxData[4], cRxData[5])/10.0;
-          sprintf(str, "%.2f", ect1);
+          sprintf(str, "%-6.2f", ect1);
           tft.textSetCursor(WATER_X,WATER_Y + 50);
           tft.textWrite(str);
           break;
@@ -195,9 +193,8 @@ void loop()
 
         case 0x60C:    // oil temperature, eot1, byte 1-2
         {
-          memset(str, 0, 20);
           float eot1 =  big_to_little(cRxData[0], cRxData[1])/10.0;
-          sprintf(str, "%.2f", eot1);
+          sprintf(str, "%-6.2f", eot1);
           tft.textSetCursor(OIL_X,OIL_Y + 50);
           tft.textWrite(str);
           break;
@@ -206,22 +203,19 @@ void loop()
         // LAM2 610, 3-4
         case 0x610:
         {
-          memset(str, 0, 20);
           float lam = big_to_little(cRxData[0], cRxData[1])/1000.0;
 
-          sprintf(str, "%.3f", lam);
+          sprintf(str, "%-5.3f", lam);
           tft.textSetCursor(LAM1_X,LAM1_Y + 50);
           tft.textWrite(str);
-
-          memset(str, 0, 20);
+    
           lam =  big_to_little(cRxData[2],cRxData[3])/1000.0;
-          sprintf(str, "%.3f", lam);
+          sprintf(str, "%-5.3f", lam);
           tft.textSetCursor(LAM2_X,LAM2_Y + 50);
           tft.textWrite(str);
           
-          memset(str, 0, 20);
           int rpm = big_to_little(cRxData[4],cRxData[5]);
-          sprintf(str, "%d ", rpm);
+          sprintf(str, "%-5d ", rpm);
           tft.textSetCursor(RPM_X,RPM_Y + 50);
           tft.textWrite(str);
           break;
@@ -230,12 +224,11 @@ void loop()
         }
         // MAP 600, 7-8
         
-        case 0x623:
+        case 0x624:
         {
-          memset(str, 0, 20);
           int MAP = big_to_little(cRxData[0],cRxData[1]);
          
-          sprintf(str, "%d", MAP); 
+          sprintf(str, "%-5d", MAP); 
           tft.textSetCursor(MAP_X,MAP_Y + 50);
           tft.textWrite(str);
 
@@ -244,11 +237,10 @@ void loop()
         // TPS 608, 1-2
         case 0x608:
         {
-          memset(str, 0, 20);
           float tps = big_to_little(cRxData[0],cRxData[1])/81.92;
 
           tps = (tps> 100)? 100.0: tps;
-          sprintf(str, "%.1f  ", tps );
+          sprintf(str, "%-4.1f  ", tps );
           tft.textSetCursor(TPS_X,TPS_Y + 50);
           tft.textWrite(str);
 
@@ -256,9 +248,6 @@ void loop()
         }
         
       }//end switch
-
-      
-      
     }// end if
 
   }// end while
