@@ -160,18 +160,22 @@ void loop()
 
       //print of display
       switch (lMsgID) {   //hoping the data is big endian
-
-        case 0x604:    // gear, byte 7-8
+        case 0x618:
         {
           tft.textColor(RA8875_BLUE, RA8875_BLACK);
-          int wheel_spin = big_to_little(cRxData[2], cRxData[3]);
+          int speed_avg = big_to_little(cRxData[0], cRxData[1]) + big_to_little(cRxData[2], cRxData[3]);
+          // The speed is an average of the two wheels speed.
+          speed_avg >>= 1;
 
-          sprintf(str, "%-6d", wheel_spin);
+          sprintf(str, "%-6d", speed_avg);
           tft.textSetCursor(SPEED_X,SPEED_Y + 50);
           tft.textWrite(str);
 
           tft.textColor(RA8875_YELLOW, RA8875_BLACK);
-
+          break; 
+        }
+        case 0x604:    // gear, byte 7-8
+        {
           int gear = big_to_little(cRxData[6], cRxData[7]);
           if (gear >= 2 and gear <= 8) {
             sprintf(str, "%d", gear-2);
